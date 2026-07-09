@@ -50,21 +50,28 @@ First boot takes a few minutes.
 
 ## Build from source
 
+Replace `<account>/<repo>` with this repository.
+
 ```bash
 mkdir liuqin && cd liuqin
 repo init -u https://github.com/LineageOS/android.git -b lineage-23.2 --git-lfs
-git clone https://github.com/<your-account>/<this-repo> .repo/local_manifests_src
-cp .repo/local_manifests_src/local_manifests/liuqin.xml .repo/local_manifests/
+mkdir -p .repo/local_manifests
+curl -Lo .repo/local_manifests/liuqin.xml \
+  https://raw.githubusercontent.com/<account>/<repo>/main/local_manifests/liuqin.xml
 repo sync -c -j8
-# apply the NFC/SecureElement fix (also proposed upstream):
-( cd device/xiaomi/sm8450-common && git apply /path/to/patches/0001-*.patch )
-( cd device/xiaomi/liuqin       && git apply /path/to/patches/0002-*.patch )
+
+# Apply the NFC/SecureElement fix (also proposed upstream to Sickyman678):
+curl -L https://raw.githubusercontent.com/<account>/<repo>/main/patches/0001-sm8450-common-guard-nfc-se-on-TARGET_HAS_NO_NFC.patch \
+  | git -C device/xiaomi/sm8450-common apply
+curl -L https://raw.githubusercontent.com/<account>/<repo>/main/patches/0002-liuqin-set-TARGET_HAS_NO_NFC.patch \
+  | git -C device/xiaomi/liuqin apply
+
 source build/envsetup.sh
 lunch lineage_liuqin-bp4a-userdebug
 mka bacon
 ```
 
-Output is in `out/target/product/liuqin/`. The device tree uses a prebuilt kernel (`device/xiaomi/liuqin-kernel`); the kernel source is synced only for headers.
+Output is in `out/target/product/liuqin/`. The device tree uses a prebuilt kernel (`device/xiaomi/liuqin-kernel`); the kernel source is synced only for headers. Once the fix is merged upstream, the `git apply` steps are no longer needed.
 
 ## SecureElement / NFC fix
 
