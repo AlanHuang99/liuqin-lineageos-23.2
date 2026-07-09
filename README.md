@@ -6,47 +6,50 @@ This is an unofficial community build. It is not affiliated with, endorsed by, o
 
 ## Status
 
-Built from source on 2026-07-09 and booted on a retail liuqin with the bootloader unlocked. The following were checked on-device:
+Built from source on 2026-07-09 and booted on a retail liuqin (bootloader unlocked). Checked on-device:
 
 - Boots to setup; SELinux enforcing; file-based encryption active.
-- Display: 1800x2880 internal panel, 144 Hz (also 120/90/60/50/48/30), HDR modes reported.
-- WiFi (scan and associate), Bluetooth, sensors (accelerometer, gyroscope, ambient light), speaker audio.
-- Cameras enumerate and the camera app previews.
-- Hardware video, GPU, and the stylus were not exhaustively tested. Report issues you find.
+- Display: 1800x2880 internal panel running at 144 Hz, with 120/90/60/50/48/30 Hz modes and HDR types reported.
+- Auto-rotation works (accelerometer); the gyroscope and ambient-light sensors enumerate.
+- WiFi scans 2.4 and 5 GHz networks; Bluetooth turns on; the primary audio output HAL initializes.
+- Cameras enumerate; the camera app captured a 12 MP photo.
+- The LineageOS recovery boots and `adb sideload` is available.
 
-There is no NFC or secure element on this device, so those features are intentionally absent (see "SecureElement/NFC fix" below).
+Not exhaustively tested: WiFi/Bluetooth throughput and pairing, hardware video decode, GPU under load, the stylus, GPS, and audio playback quality. Please report anything you find.
+
+There is no NFC or secure element on this device, so those features are intentionally absent (see "SecureElement / NFC fix" below).
 
 ## Downloads
 
 Builds are attached to the [Releases](../../releases) page:
 
 - `lineage-23.2-<date>-UNOFFICIAL-liuqin.zip` — installable package (recovery sideload).
-- `boot.img`, `dtbo.img`, `vendor_boot.img`, `recovery.img`, `vbmeta.img` — fastboot images.
+- `recovery.img` — LineageOS recovery, flashed first via fastboot.
+- `boot.img`, `dtbo.img`, `vendor_boot.img`, `vbmeta.img`, `vbmeta_system.img` — additional fastboot images.
+- `SHA256SUMS` — checksums for all of the above.
 
-Builds are vanilla (no Google apps). Install a Google apps package (for example MindTheGapps arm64 for Android 16) yourself if you want the Play Store and Google services, before first boot.
+Builds are vanilla (no Google apps). If you want the Play Store and Google services, sideload a Google apps package (for example MindTheGapps arm64 for Android 16) right after the ROM, before first boot.
 
 ## Install (recovery sideload)
 
-You need an unlocked bootloader and `adb` / `fastboot` on a computer.
+You need an unlocked bootloader and `adb` / `fastboot` on a computer. This erases user data. Flashing an unofficial build is at your own risk.
 
 1. Reboot to the bootloader: `adb reboot bootloader`.
-2. Flash the recovery and boot images to both slots:
+2. Flash the LineageOS recovery to both slots, and disable Android Verified Boot so the device accepts the build:
    ```
-   fastboot flash boot_a boot.img;         fastboot flash boot_b boot.img
-   fastboot flash dtbo_a dtbo.img;         fastboot flash dtbo_b dtbo.img
-   fastboot flash vendor_boot_a vendor_boot.img; fastboot flash vendor_boot_b vendor_boot.img
-   fastboot flash recovery_a recovery.img; fastboot flash recovery_b recovery.img
+   fastboot flash recovery_a recovery.img
+   fastboot flash recovery_b recovery.img
    fastboot --disable-verity --disable-verification flash vbmeta_a vbmeta.img
    fastboot --disable-verity --disable-verification flash vbmeta_b vbmeta.img
    ```
-3. Reboot to recovery (hold Volume Up + Power, or `fastboot reboot recovery`).
-4. In LineageOS recovery: Factory reset → Format data/factory reset.
+3. Reboot to recovery: `fastboot reboot recovery` (or hold Volume Up + Power).
+4. In LineageOS recovery: Factory reset → Format data / factory reset.
 5. Apply update → Apply from ADB, then on the computer:
    `adb sideload lineage-23.2-<date>-UNOFFICIAL-liuqin.zip`
-6. Optionally sideload a Google apps zip the same way before rebooting.
-7. Reboot to system.
+6. Optionally sideload a Google apps zip the same way, before rebooting.
+7. Reboot to system. First boot takes a few minutes.
 
-First boot takes a few minutes.
+Verified on liuqin: the images boot, and the recovery boots with `adb sideload` available. If the recovery screen does not render for you, you can format data from the bootloader instead with `fastboot -w`, then enter "Apply from ADB" and sideload as above.
 
 ## Build from source
 
