@@ -21,7 +21,12 @@ There is no NFC or secure element on this device, so those features are intentio
 
 ## Downloads
 
-Builds are attached to the [Releases](../../releases) page:
+Available from two mirrors:
+
+- **SourceForge** (fast mirrors): https://sourceforge.net/projects/liuqin-lineageos/files/23.2-20260709/
+- **GitHub Releases**: [Releases](../../releases) page
+
+Each carries:
 
 - `lineage-23.2-<date>-UNOFFICIAL-liuqin.zip` — installable package (recovery sideload).
 - `recovery.img` — LineageOS recovery, flashed first via fastboot.
