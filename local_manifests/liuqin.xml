@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Local manifest for building LineageOS 23.2 for the Xiaomi Pad 6 Pro (liuqin).
+
+  Device trees, prebuilt kernel and vendor blobs are from Sickyman678's
+  actively maintained liuqin stack (branch liuqin-fixes). Platform-side
+  dependencies (hardware/xiaomi, kernel source, devicetrees, modules) are the
+  LineageOS lineage-23.2 upstream repositories.
+
+  This manifest builds a vanilla image (no Google apps). To add Google apps,
+  sync a MindTheGapps arm64 tree at vendor/gapps and rebuild; the device tree
+  inherits it via inherit-product-if-exists.
+-->
+<manifest>
+  <remote name="sickyman" fetch="https://github.com/Sickyman678/" revision="liuqin-fixes" />
+  <remote name="losgh" fetch="https://github.com/LineageOS/" revision="lineage-23.2" />
+
+  <!-- Device trees + prebuilt kernel (Sickyman678) -->
+  <project name="android_device_xiaomi_liuqin" path="device/xiaomi/liuqin" remote="sickyman" />
+  <project name="android_device_xiaomi_liuqin-kernel" path="device/xiaomi/liuqin-kernel" remote="sickyman" />
+  <project name="android_device_xiaomi_sm8450-common" path="device/xiaomi/sm8450-common" remote="sickyman" />
+
+  <!-- Vendor blobs (Sickyman678; extracted with check_elf from stock OS3.0.5.0) -->
+  <project name="proprietary_vendor_xiaomi_liuqin" path="vendor/xiaomi/liuqin" remote="sickyman" />
+  <project name="proprietary_vendor_xiaomi_sm8450-common" path="vendor/xiaomi/sm8450-common" remote="sickyman" />
+
+  <!-- Platform-side dependencies (LineageOS upstream). The kernel source is
+       needed for headers and modules.list even though the kernel Image is
+       prebuilt in device/xiaomi/liuqin-kernel. -->
+  <project name="android_hardware_xiaomi" path="hardware/xiaomi" remote="losgh" />
+  <project name="android_kernel_xiaomi_sm8450" path="kernel/xiaomi/sm8450" remote="losgh" />
+  <project name="android_kernel_xiaomi_sm8450-devicetrees" path="kernel/xiaomi/sm8450-devicetrees" remote="losgh" />
+  <project name="android_kernel_xiaomi_sm8450-modules" path="kernel/xiaomi/sm8450-modules" remote="losgh" />
+</manifest>
