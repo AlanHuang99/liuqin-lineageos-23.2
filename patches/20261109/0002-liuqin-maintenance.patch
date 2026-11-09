@@ -1,0 +1,810 @@
+diff --git a/audio/mixer_paths_waipio_mtp.xml b/audio/mixer_paths_waipio_mtp.xml
+index 91fbeb59722d8179cb25951c2a9f75cc84c3e080..f37b3f75917d4332cc588d343ec9936675d6086b 100644
+--- a/audio/mixer_paths_waipio_mtp.xml
++++ b/audio/mixer_paths_waipio_mtp.xml
+@@ -2268,11 +2268,11 @@
+     </path>
+ 
+     <path name="speaker-mic">
+-        <path name="dmic3" />
++        <path name="amic5" />
+     </path>
+ 
+     <path name="speaker-mic-liquid">
+-        <path name="dmic1" />
++        <path name="amic5" />
+     </path>
+ 
+     <path name="speaker-mic-sbc">
+@@ -2342,11 +2342,11 @@
+     </path>
+ 
+     <path name="handset-mic">
+-        <path name="dmic2" />
++        <path name="amic1" />
+     </path>
+ 
+     <path name="handset-mic-unprocessed">
+-       <path name="dmic2" />
++       <path name="amic1" />
+        <ctl name="TX_DEC2 Volume" value="102" />
+     </path>
+ 
+@@ -2860,17 +2860,43 @@
+ 
+     <!-- Dual MIC devices -->
+     <path name="handset-dmic-endfire">
++        <ctl name="TX DEC1 MUX" value="SWR_MIC" />
++        <ctl name="TX SMIC MUX1" value="SWR_MIC4" />
+         <ctl name="TX_AIF1_CAP Mixer DEC1" value="1" />
+-        <ctl name="TX DMIC MUX1" value="DMIC1" />
+-        <ctl name="TX_AIF1_CAP Mixer DEC2" value="1" />
+-        <ctl name="TX DMIC MUX2" value="DMIC3" />
++        <ctl name="ADC1 ChMap" value="SWRM_TX2_CH1" />
++        <ctl name="TX0 MODE" value="ADC_LP" />
++        <ctl name="ADC1_MIXER Switch" value="1" />
++        <ctl name="AMIC1_MIXER Switch" value="1" />
++        <ctl name="TX DEC3 MUX" value="SWR_MIC" />
++        <ctl name="TX SMIC MUX3" value="SWR_MIC9" />
++        <ctl name="TX_AIF1_CAP Mixer DEC3" value="1" />
++        <ctl name="ADC4 MUX" value="INP5" />
++        <ctl name="ADC4 ChMap" value="SWRM_TX3_CH2" />
++        <ctl name="TX3 MODE" value="ADC_LP" />
++        <ctl name="ADC4_MIXER Switch" value="1" />
++        <ctl name="AMIC5_MIXER Switch" value="1" />
++        <ctl name="ADC1 Volume" value="8" />
++        <ctl name="ADC4 Volume" value="8" />
+     </path>
+ 
+     <path name="speaker-dmic-endfire">
++        <ctl name="TX DEC1 MUX" value="SWR_MIC" />
++        <ctl name="TX SMIC MUX1" value="SWR_MIC4" />
+         <ctl name="TX_AIF1_CAP Mixer DEC1" value="1" />
+-        <ctl name="TX DMIC MUX1" value="DMIC2" />
+-        <ctl name="TX_AIF1_CAP Mixer DEC2" value="1" />
+-        <ctl name="TX DMIC MUX2" value="DMIC3" />
++        <ctl name="ADC1 ChMap" value="SWRM_TX2_CH1" />
++        <ctl name="TX0 MODE" value="ADC_LP" />
++        <ctl name="ADC1_MIXER Switch" value="1" />
++        <ctl name="AMIC1_MIXER Switch" value="1" />
++        <ctl name="TX DEC3 MUX" value="SWR_MIC" />
++        <ctl name="TX SMIC MUX3" value="SWR_MIC9" />
++        <ctl name="TX_AIF1_CAP Mixer DEC3" value="1" />
++        <ctl name="ADC4 MUX" value="INP5" />
++        <ctl name="ADC4 ChMap" value="SWRM_TX3_CH2" />
++        <ctl name="TX3 MODE" value="ADC_LP" />
++        <ctl name="ADC4_MIXER Switch" value="1" />
++        <ctl name="AMIC5_MIXER Switch" value="1" />
++        <ctl name="ADC1 Volume" value="6" />
++        <ctl name="ADC4 Volume" value="6" />
+     </path>
+ 
+     <!-- Dual ADC MIC devices -->
+@@ -2957,7 +2983,7 @@
+     </path>
+ 
+     <path name="handset-stereo-dmic-ef">
+-        <path name="handset-dmic-endfire" />
++        <path name="handset-dmic-dual-adc" />
+     </path>
+ 
+     <path name="speaker-stereo-dmic-ef">
+diff --git a/configs/audio/audio_policy_configuration.xml b/configs/audio/audio_policy_configuration.xml
+new file mode 100644
+index 0000000000000000000000000000000000000000..72f2703f5c65c4e25e5e66ddc690dd14aac0d7cf
+--- /dev/null
++++ b/configs/audio/audio_policy_configuration.xml
+@@ -0,0 +1,445 @@
++<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
++<!-- Copyright (c) 2016-2021, The Linux Foundation. All rights reserved
++     Not a Contribution.
++-->
++<!-- Copyright (C) 2015 The Android Open Source Project
++
++     Licensed under the Apache License, Version 2.0 (the "License");
++     you may not use this file except in compliance with the License.
++     You may obtain a copy of the License at
++
++          http://www.apache.org/licenses/LICENSE-2.0
++
++     Unless required by applicable law or agreed to in writing, software
++     distributed under the License is distributed on an "AS IS" BASIS,
++     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++     See the License for the specific language governing permissions and
++     limitations under the License.
++-->
++
++<!--
++Changes from Qualcomm Innovation Center are provided under the following license:
++
++Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted (subject to the limitations in the
++disclaimer below) provided that the following conditions are met:
++
++   * Redistributions of source code must retain the above copyright
++     notice, this list of conditions and the following disclaimer.
++
++   * Redistributions in binary form must reproduce the above
++     copyright notice, this list of conditions and the following
++     disclaimer in the documentation and/or other materials provided
++     with the distribution.
++
++   * Neither the name of Qualcomm Innovation Center, Inc. nor the names of its
++     contributors may be used to endorse or promote products derived
++     from this software without specific prior written permission.
++
++NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE
++GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
++HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
++WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
++IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
++ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++-->
++
++<audioPolicyConfiguration version="7.0" xmlns:xi="http://www.w3.org/2001/XInclude">
++    <!-- version section contains a “version” tag in the form “major.minor” e.g version=”1.0” -->
++
++    <!-- Global configuration Decalaration -->
++    <globalConfiguration speaker_drc_enabled="true" call_screen_mode_supported="true"/>
++
++
++    <!-- Modules section:
++        There is one section per audio HW module present on the platform.
++        Each module section will contains two mandatory tags for audio HAL “halVersion” and “name”.
++        The module names are the same as in current .conf file:
++                “primary”, “A2DP”, “remote_submix”, “USB”
++        Each module will contain the following sections:
++        “devicePorts”: a list of device descriptors for all input and output devices accessible via this
++        module.
++        This contains both permanently attached devices and removable devices.
++        “mixPorts”: listing all output and input streams exposed by the audio HAL
++        “routes”: list of possible connections between input and output devices or between stream and
++        devices.
++            "route": is defined by an attribute:
++                -"type": <mux|mix> means all sources are mutual exclusive (mux) or can be mixed (mix)
++                -"sink": the sink involved in this route
++                -"sources": all the sources than can be connected to the sink via vis route
++        “attachedDevices”: permanently attached devices.
++        The attachedDevices section is a list of devices names. The names correspond to device names
++        defined in <devicePorts> section.
++        “defaultOutputDevice”: device to be used by default when no policy rule applies
++    -->
++    <modules>
++        <!-- Primary Audio HAL -->
++        <module name="primary" halVersion="2.0">
++            <attachedDevices>
++                <item>Earpiece</item>
++                <item>Speaker</item>
++                <item>Telephony Tx</item>
++                <item>Built-In Mic</item>
++                <item>Built-In Back Mic</item>
++                <item>Telephony Rx</item>
++            </attachedDevices>
++            <defaultOutputDevice>Speaker</defaultOutputDevice>
++            <mixPorts>
++                <mixPort name="primary output" role="source" flags="AUDIO_OUTPUT_FLAG_FAST AUDIO_OUTPUT_FLAG_PRIMARY">
++                    <profile name="" format="AUDIO_FORMAT_PCM_24_BIT_PACKED"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++                <mixPort name="deep_buffer" role="source"
++                        flags="AUDIO_OUTPUT_FLAG_DEEP_BUFFER">
++                    <profile name="" format="AUDIO_FORMAT_PCM_24_BIT_PACKED"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++                <mixPort name="mmap_no_irq_out" role="source" flags="AUDIO_OUTPUT_FLAG_DIRECT AUDIO_OUTPUT_FLAG_MMAP_NOIRQ">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++                <mixPort name="hifi_playback" role="source" />
++                <mixPort name="direct_pcm" role="source"
++                        flags="AUDIO_OUTPUT_FLAG_DIRECT">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_PCM_8_24_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000 352800 384000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_PCM_24_BIT_PACKED"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000 352800 384000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                  <profile name="" format="AUDIO_FORMAT_PCM_32_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000 352800 384000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                </mixPort>
++                <mixPort name="compressed_offload" role="source"
++                         flags="AUDIO_OUTPUT_FLAG_DIRECT AUDIO_OUTPUT_FLAG_COMPRESS_OFFLOAD AUDIO_OUTPUT_FLAG_NON_BLOCKING AUDIO_OUTPUT_FLAG_GAPLESS_OFFLOAD">
++                    <profile name="" format="AUDIO_FORMAT_MP3"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_FLAC"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_ALAC"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_APE"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_AAC_LC"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_AAC_HE_V1"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_AAC_HE_V2"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_DTS"
++                             samplingRates="32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_DTS_HD"
++                             samplingRates="32000 44100 48000 64000 88200 96000 128000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_WMA"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_WMA_PRO"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_2POINT1 AUDIO_CHANNEL_OUT_QUAD AUDIO_CHANNEL_OUT_PENTA AUDIO_CHANNEL_OUT_5POINT1 AUDIO_CHANNEL_OUT_6POINT1 AUDIO_CHANNEL_OUT_7POINT1"/>
++                    <profile name="" format="AUDIO_FORMAT_VORBIS"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000 128000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_AAC_ADTS_LC"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_AAC_ADTS_HE_V1"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                    <profile name="" format="AUDIO_FORMAT_AAC_ADTS_HE_V2"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 64000 88200 96000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO AUDIO_CHANNEL_OUT_MONO"/>
++                </mixPort>
++                <mixPort name="voice_tx" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000 48000" channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++                <mixPort name="voip_rx" role="source"
++                         flags="AUDIO_OUTPUT_FLAG_VOIP_RX">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000 32000 48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++                <mixPort name="incall_music_uplink" role="source"
++                        flags="AUDIO_OUTPUT_FLAG_INCALL_MUSIC">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000 48000"
++                             channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++
++                <mixPort name="primary input" role="sink" maxOpenCount="2" maxActiveCount="2">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 96000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK"/>
++                </mixPort>
++                <mixPort name="fast input" role="sink"
++                         flags="AUDIO_INPUT_FLAG_FAST">
++                     <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                              samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                              channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK"/>
++                </mixPort>
++                <mixPort name="quad mic" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                        samplingRates="48000"
++                        channelMasks="AUDIO_CHANNEL_INDEX_MASK_4"/>
++                </mixPort>
++                <mixPort name="voip_tx" role="sink"
++                         flags="AUDIO_INPUT_FLAG_VOIP_TX">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000 32000 48000" channelMasks="AUDIO_CHANNEL_IN_MONO"/>
++                </mixPort>
++                <mixPort name="usb_surround_sound" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 88200 96000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK AUDIO_CHANNEL_INDEX_MASK_3 AUDIO_CHANNEL_INDEX_MASK_4 AUDIO_CHANNEL_IN_5POINT1 AUDIO_CHANNEL_INDEX_MASK_6 AUDIO_CHANNEL_INDEX_MASK_8"/>
++                    <profile name="" format="AUDIO_FORMAT_PCM_32_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 88200 96000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_IN_5POINT1 AUDIO_CHANNEL_INDEX_MASK_6 AUDIO_CHANNEL_INDEX_MASK_8"/>
++                    <profile name="" format="AUDIO_FORMAT_PCM_FLOAT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 88200 96000 176400 192000"
++                             channelMasks="AUDIO_CHANNEL_IN_5POINT1 AUDIO_CHANNEL_INDEX_MASK_6 AUDIO_CHANNEL_INDEX_MASK_8"/>
++                </mixPort>
++                <mixPort name="record_24" role="sink" maxOpenCount="2" maxActiveCount="2">
++                    <profile name="" format="AUDIO_FORMAT_PCM_24_BIT_PACKED"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 96000 192000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK AUDIO_CHANNEL_INDEX_MASK_3 AUDIO_CHANNEL_INDEX_MASK_4"/>
++                    <profile name="" format="AUDIO_FORMAT_PCM_8_24_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 96000 192000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK AUDIO_CHANNEL_INDEX_MASK_3 AUDIO_CHANNEL_INDEX_MASK_4"/>
++                    <profile name="" format="AUDIO_FORMAT_PCM_FLOAT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000 96000 192000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK AUDIO_CHANNEL_INDEX_MASK_3 AUDIO_CHANNEL_INDEX_MASK_4"/>
++                </mixPort>
++                <mixPort name="voice_rx" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000 48000" channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO"/>
++                </mixPort>
++                <mixPort name="mmap_no_irq_in" role="sink" flags="AUDIO_INPUT_FLAG_MMAP_NOIRQ">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK AUDIO_CHANNEL_INDEX_MASK_3"/>
++                </mixPort>
++                <mixPort name="hifi_input" role="sink" />
++            </mixPorts>
++
++            <devicePorts>
++                <!-- Output devices declaration, i.e. Sink DEVICE PORT -->
++                <devicePort tagName="Earpiece" type="AUDIO_DEVICE_OUT_EARPIECE" role="sink">
++                   <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                            samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_MONO"/>
++                </devicePort>
++                <devicePort tagName="Speaker" role="sink" type="AUDIO_DEVICE_OUT_SPEAKER" address="">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="Wired Headset" type="AUDIO_DEVICE_OUT_WIRED_HEADSET" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="Wired Headphones" type="AUDIO_DEVICE_OUT_WIRED_HEADPHONE" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="Line" type="AUDIO_DEVICE_OUT_LINE" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="BT SCO" type="AUDIO_DEVICE_OUT_BLUETOOTH_SCO" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000" channelMasks="AUDIO_CHANNEL_OUT_MONO"/>
++                </devicePort>
++                <devicePort tagName="BT SCO Headset" type="AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000" channelMasks="AUDIO_CHANNEL_OUT_MONO"/>
++                </devicePort>
++                <devicePort tagName="BT SCO Car Kit" type="AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000" channelMasks="AUDIO_CHANNEL_OUT_MONO"/>
++                </devicePort>
++                <devicePort tagName="Telephony Tx" type="AUDIO_DEVICE_OUT_TELEPHONY_TX" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000" channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="HDMI" type="AUDIO_DEVICE_OUT_AUX_DIGITAL" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 16000 22050 32000 44100 48000 64000 88200 96000 128000 176400 192000"/>
++                </devicePort>
++                <devicePort tagName="Proxy" type="AUDIO_DEVICE_OUT_PROXY" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 16000 22050 32000 44100 48000 64000 88200 96000 128000 176400 192000"/>
++                </devicePort>
++                <devicePort tagName="FM" type="AUDIO_DEVICE_OUT_FM" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="BT A2DP Out" type="AUDIO_DEVICE_OUT_BLUETOOTH_A2DP" role="sink"
++                            encodedFormats="AUDIO_FORMAT_SBC AUDIO_FORMAT_AAC AUDIO_FORMAT_APTX AUDIO_FORMAT_APTX_HD AUDIO_FORMAT_LDAC">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="BT A2DP Headphones" type="AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES" role="sink"
++                            encodedFormats="AUDIO_FORMAT_SBC AUDIO_FORMAT_AAC AUDIO_FORMAT_APTX AUDIO_FORMAT_APTX_HD AUDIO_FORMAT_LDAC">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="BT A2DP Speaker" type="AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_SPEAKER" role="sink"
++                            encodedFormats="AUDIO_FORMAT_SBC AUDIO_FORMAT_AAC AUDIO_FORMAT_APTX AUDIO_FORMAT_APTX_HD AUDIO_FORMAT_LDAC">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++                <devicePort tagName="USB Device Out" type="AUDIO_DEVICE_OUT_USB_DEVICE" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="44100 48000 64000 88200 96000 128000 176400 192000"/>
++                </devicePort>
++                <devicePort tagName="USB Headset Out" type="AUDIO_DEVICE_OUT_USB_HEADSET" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="44100 48000 64000 88200 96000 128000 176400 192000"/>
++                </devicePort>
++
++                <!-- Input devices declaration, i.e. Source DEVICE PORT -->
++                <devicePort tagName="Built-In Mic" type="AUDIO_DEVICE_IN_BUILTIN_MIC" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK"/>
++                </devicePort>
++                <devicePort tagName="Built-In Back Mic" type="AUDIO_DEVICE_IN_BACK_MIC" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK"/>
++                </devicePort>
++                <devicePort tagName="Wired Headset Mic" type="AUDIO_DEVICE_IN_WIRED_HEADSET" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
++                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO AUDIO_CHANNEL_IN_FRONT_BACK"/>
++                </devicePort>
++                <devicePort tagName="BT SCO Headset Mic" type="AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000" channelMasks="AUDIO_CHANNEL_IN_MONO"/>
++                </devicePort>
++                <devicePort tagName="Telephony Rx" type="AUDIO_DEVICE_IN_TELEPHONY_RX" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="8000 16000 48000" channelMasks="AUDIO_CHANNEL_IN_MONO"/>
++                </devicePort>
++                <devicePort tagName="USB Device In" type="AUDIO_DEVICE_IN_USB_DEVICE" role="source">
++                </devicePort>
++                <devicePort tagName="USB Headset In" type="AUDIO_DEVICE_IN_USB_HEADSET" role="source">
++                </devicePort>
++                <devicePort tagName="A2DP In" type="AUDIO_DEVICE_IN_BLUETOOTH_A2DP" role="source"
++                            encodedFormats="AUDIO_FORMAT_LC3">
++                   <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                            samplingRates="44100 48000" channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO"/>
++                </devicePort>
++            </devicePorts>
++            <!-- route declaration, i.e. list all available sources for a given sink -->
++            <routes>
++                <route type="mix" sink="Earpiece"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out"/>
++                <route type="mix" sink="Speaker"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out"/>
++                <route type="mix" sink="Wired Headset"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out"/>
++                <route type="mix" sink="Wired Headphones"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out"/>
++                <route type="mix" sink="Line"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out"/>
++                <route type="mix" sink="HDMI"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="Proxy"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload"/>
++                <route type="mix" sink="FM"
++                       sources="primary output"/>
++                <route type="mix" sink="BT SCO"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="BT SCO Headset"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="BT SCO Car Kit"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="USB Device Out"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out,hifi_playback"/>
++                <route type="mix" sink="USB Headset Out"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx,mmap_no_irq_out,hifi_playback"/>
++                <route type="mix" sink="Telephony Tx"
++                       sources="voice_tx,incall_music_uplink"/>
++                <route type="mix" sink="voice_rx"
++                       sources="Telephony Rx"/>
++                <route type="mix" sink="primary input"
++                       sources="Built-In Mic,Built-In Back Mic,Wired Headset Mic,BT SCO Headset Mic,Telephony Rx,A2DP In"/>
++                <route type="mix" sink="usb_surround_sound"
++                       sources="USB Device In,USB Headset In"/>
++                <route type="mix" sink="fast input"
++                       sources="Built-In Mic,Built-In Back Mic,BT SCO Headset Mic,USB Device In,USB Headset In,Wired Headset Mic"/>
++                <route type="mix" sink="quad mic"
++                       sources="Built-In Mic,Built-In Back Mic,BT SCO Headset Mic,USB Device In,USB Headset In,Wired Headset Mic"/>
++                <route type="mix" sink="voip_tx"
++                       sources="Built-In Mic,Built-In Back Mic,BT SCO Headset Mic,USB Device In,USB Headset In,Wired Headset Mic"/>
++                <route type="mix" sink="record_24"
++                       sources="Built-In Mic,Built-In Back Mic,Wired Headset Mic,A2DP In"/>
++                <route type="mix" sink="mmap_no_irq_in"
++                       sources="Built-In Mic,Built-In Back Mic,Wired Headset Mic,USB Device In,USB Headset In"/>
++                <route type="mix" sink="BT A2DP Out"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="BT A2DP Headphones"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="BT A2DP Speaker"
++                       sources="primary output,deep_buffer,direct_pcm,compressed_offload,voip_rx"/>
++                <route type="mix" sink="hifi_input" sources="USB Device In,USB Headset In" />
++            </routes>
++
++        </module>
++
++
++
++        <!-- Usb Audio HAL -->
++        <module name="usb" halVersion="2.0">
++            <mixPorts>
++                <mixPort name="usb_accessory output" role="source">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="44100" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </mixPort>
++            </mixPorts>
++            <devicePorts>
++                <devicePort tagName="USB Host Out" type="AUDIO_DEVICE_OUT_USB_ACCESSORY" role="sink">
++                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
++                             samplingRates="44100" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
++                </devicePort>
++            </devicePorts>
++            <routes>
++                <route type="mix" sink="USB Host Out"
++                       sources="usb_accessory output"/>
++            </routes>
++        </module>
++
++        <!-- Remote Submix Audio HAL -->
++        <xi:include href="/vendor/etc/r_submix_audio_policy_configuration.xml"/>
++
++    </modules>
++    <!-- End of Modules section -->
++
++    <!-- Volume section -->
++
++    <xi:include href="/vendor/etc/audio_policy_volumes.xml"/>
++    <xi:include href="/vendor/etc/default_volume_tables.xml"/>
++
++    <!-- End of Volume section -->
++
++</audioPolicyConfiguration>
+diff --git a/configs/idc/Vendor_15d9_Product_00a3.idc b/configs/idc/Vendor_15d9_Product_00a3.idc
+new file mode 100644
+index 0000000000000000000000000000000000000000..d6d60a95210b44651db003f0a8d41d5788bf72f4
+--- /dev/null
++++ b/configs/idc/Vendor_15d9_Product_00a3.idc
+@@ -0,0 +1 @@
++keyboard.orientationAware = 0
+diff --git a/device.mk b/device.mk
+index 2783193a7c8dc70d6b832269f2df393b05e9be6a..32cbca32d5d037e5711a9643d0e91222adbe568b 100644
+--- a/device.mk
++++ b/device.mk
+@@ -19,6 +19,14 @@ TARGET_DEVICE_FSTAB := $(LOCAL_PATH)/init/fstab.qcom
+ # must be set BEFORE inheriting it.
+ TARGET_HAS_NO_TELEPHONY := true
+ 
++# WiFi-only tablet with no NFC controller and no secure element. Skip the
++# common NFC / SecureElement packages and feature permission XMLs. Without this
++# guard common.mk copies android.hardware.se.omapi.{uicc,ese}.xml even though no
++# SE HAL exists, so SecureElementService binds a missing HAL and ANRs every 20s
++# (executing service com.android.se/.SecureElementService, waited 20006ms).
++# Consumed by common.mk's NFC/SE guard; must be set BEFORE inheriting it.
++TARGET_HAS_NO_NFC := true
++
+ # Mark liuqin as a tablet, matching the official LineageOS pipa (Pad 6) tree
+ # and the hiper25 liuqin tree. Set before inheriting common.mk so any tablet
+ # guards see it.
+@@ -33,6 +41,10 @@ TARGET_IS_TABLET := true
+ PRODUCT_COPY_FILES += \
+     $(LOCAL_PATH)/configs/audio/audio_effects.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_effects.xml
+ 
++# liuqin has no FM tuner; select its audio policy before the common copy.
++PRODUCT_COPY_FILES += \
++    $(LOCAL_PATH)/configs/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_policy_configuration.xml
++
+ # Inherit from xiaomi sm8450-common
+ $(call inherit-product, device/xiaomi/sm8450-common/common.mk)
+ 
+@@ -116,8 +128,13 @@ PRODUCT_PACKAGES += \
+     init.mi_perf.rc \
+     init.mi_service.rc
+ 
++# Novatek pen connection initialization
++PRODUCT_PACKAGES += \
++    liuqin_pen_init
++
+ # Input device configuration (stylus + keyboard)
+ PRODUCT_COPY_FILES += \
++    $(LOCAL_PATH)/configs/idc/Vendor_15d9_Product_00a3.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/Vendor_15d9_Product_00a3.idc \
+     $(LOCAL_PATH)/configs/idc/Vendor_1915_Product_4d81.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/Vendor_1915_Product_4d81.idc \
+     $(LOCAL_PATH)/configs/idc/Vendor_1915_Product_eaea.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/Vendor_1915_Product_eaea.idc
+ 
+diff --git a/lineage_liuqin.mk b/lineage_liuqin.mk
+index aabcd3a049bb7c5f28d3088efeab2587574a4eae..240569fc6df3b3cdce3138930973f25885c3c360 100644
+--- a/lineage_liuqin.mk
++++ b/lineage_liuqin.mk
+@@ -3,15 +3,22 @@
+ # SPDX-License-Identifier: Apache-2.0
+ #
+ 
++ifneq ($(filter true,$(WITH_GMS)),)
++$(error Unset WITH_GMS for liuqin; select LIUQIN_GAPPS_VARIANT=vanilla or gapps)
++endif
++
+ # Inherit from liuqin device
+ $(call inherit-product, device/xiaomi/liuqin/device.mk)
+ 
+ # Inherit some common Lineage stuff (WiFi-only tablet)
+ $(call inherit-product, vendor/lineage/config/common_full_tablet_wifionly.mk)
+ 
+-# Inherit Google Apps (MindTheGapps, arm64) when the vendor/gapps tree is synced.
+-# inherit-product-if-exists keeps the build vanilla if it isn't present.
+-$(call inherit-product-if-exists, vendor/gapps/arm64/arm64-vendor.mk)
++# Select vanilla or built-in MindTheGapps explicitly before lunch.
++ifeq ($(LIUQIN_GAPPS_VARIANT),gapps)
++$(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
++else ifneq ($(LIUQIN_GAPPS_VARIANT),vanilla)
++$(error Set LIUQIN_GAPPS_VARIANT=vanilla or LIUQIN_GAPPS_VARIANT=gapps before lunch)
++endif
+ 
+ PRODUCT_NAME := lineage_liuqin
+ PRODUCT_DEVICE := liuqin
+diff --git a/peninit/Android.bp b/peninit/Android.bp
+new file mode 100644
+index 0000000000000000000000000000000000000000..83432fb31eddf2ce7c4ebf5a32cda06a78bbd6d7
+--- /dev/null
++++ b/peninit/Android.bp
+@@ -0,0 +1,9 @@
++cc_binary {
++    name: "liuqin_pen_init",
++    vendor: true,
++    srcs: ["liuqin_pen_init.c"],
++    shared_libs: ["liblog"],
++    stl: "none",
++    cflags: ["-Wall", "-Wextra", "-Werror"],
++    init_rc: ["liuqin_pen_init.rc"],
++}
+diff --git a/peninit/liuqin_pen_init.c b/peninit/liuqin_pen_init.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..c9ee088c5578240c80af6a6f5b48f393a215ec70
+--- /dev/null
++++ b/peninit/liuqin_pen_init.c
+@@ -0,0 +1,120 @@
++#define LOG_TAG "liuqin_pen_init"
++
++#include <errno.h>
++#include <fcntl.h>
++#include <stdint.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <unistd.h>
++
++#include <log/log.h>
++
++#define TOUCH_DEVICE "/dev/xiaomi-touch"
++#define BOOT_MARKER "/dev/liuqin_pen/initialized"
++#define TOUCH_SET _IO('T', 0)
++#define TOUCH_MIN _IO('T', 3)
++#define TOUCH_MAX _IO('T', 4)
++#define PEN_MODE 20
++#define PEN_CONNECT 0x12
++
++/* The shipped xiaomi_touch module copies 256 integers in both directions, regardless of the _IO size. */
++static int touch_request(int fd, unsigned long command, int value, int32_t *result) {
++    int32_t request[256] = {0, PEN_MODE, value};
++    _Static_assert(sizeof(request) == 1024, "xiaomi_touch ioctl buffer size");
++
++    int rc = ioctl(fd, command, request);
++    if (rc < 0) {
++        ALOGE("Touch ioctl 0x%lx failed: %s", command, strerror(errno));
++        return -1;
++    }
++    if (rc != 0) {
++        ALOGE("Touch ioctl 0x%lx returned an incomplete copy: %d", command, rc);
++        return -1;
++    }
++    *result = request[0];
++    return 0;
++}
++
++/* Creating this file exclusively reserves the boot's single connect event, including after an ambiguous ioctl failure. */
++static int reserve_boot(int *marker_fd) {
++    int fd = open(BOOT_MARKER, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC | O_NOFOLLOW, 0600);
++    if (fd >= 0) {
++        *marker_fd = fd;
++        return 1;
++    }
++    if (errno != EEXIST) {
++        ALOGE("Cannot reserve pen initialization: %s", strerror(errno));
++        return -1;
++    }
++
++    fd = open(BOOT_MARKER, O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
++    if (fd < 0) {
++        ALOGE("Cannot read pen initialization state: %s", strerror(errno));
++        return -1;
++    }
++    char completed = 0;
++    ssize_t length = read(fd, &completed, sizeof(completed));
++    int close_result = close(fd);
++    if (length == 1 && completed == '1' && close_result == 0) {
++        ALOGI("Pen initialization already completed this boot");
++        return 0;
++    }
++    ALOGE("Pen initialization was already attempted this boot; refusing a second connect event");
++    return -1;
++}
++
++int main(void) {
++    int fd = open(TOUCH_DEVICE, O_RDWR | O_CLOEXEC);
++    if (fd < 0) {
++        ALOGE("Cannot open %s: %s", TOUCH_DEVICE, strerror(errno));
++        return 1;
++    }
++
++    int status = 1;
++    int marker_fd = -1;
++    int32_t minimum, maximum, result;
++    if (touch_request(fd, TOUCH_MIN, 0, &minimum) != 0 ||
++        touch_request(fd, TOUCH_MAX, 0, &maximum) != 0) {
++        goto out;
++    }
++    /* Check the shipped Novatek pen range and reject an unregistered callback. */
++    if (minimum != -1 || maximum != PEN_CONNECT) {
++        ALOGE("Unsupported pen mode bounds: %d..%d", minimum, maximum);
++        goto out;
++    }
++
++    int reserved = reserve_boot(&marker_fd);
++    if (reserved <= 0) {
++        status = reserved == 0 ? 0 : 1;
++        goto out;
++    }
++
++    /* 0x12 increments the pen connection count. Never retry this non-idempotent ioctl. */
++    if (touch_request(fd, TOUCH_SET, PEN_CONNECT, &result) != 0)
++        goto out;
++    if (result != 0) {
++        ALOGE("Novatek rejected the pen connect event: %d", result);
++        goto out;
++    }
++    ssize_t written = write(marker_fd, "1", 1);
++    if (written != 1) {
++        if (written < 0)
++            ALOGE("Pen connect event sent, but recording completion failed: %s", strerror(errno));
++        else
++            ALOGE("Pen connect event sent, but completion marker was not written");
++        goto out;
++    }
++    ALOGI("Pen connect event sent");
++    status = 0;
++
++out:
++    if (marker_fd >= 0 && close(marker_fd) != 0) {
++        ALOGE("Closing pen initialization state failed: %s", strerror(errno));
++        status = 1;
++    }
++    if (close(fd) != 0) {
++        ALOGE("Closing touch device failed: %s", strerror(errno));
++        status = 1;
++    }
++    return status;
++}
+diff --git a/peninit/liuqin_pen_init.rc b/peninit/liuqin_pen_init.rc
+new file mode 100644
+index 0000000000000000000000000000000000000000..d6c89a42723f3fe050e43fb96360889f73efb13c
+--- /dev/null
++++ b/peninit/liuqin_pen_init.rc
+@@ -0,0 +1,12 @@
++on init
++    mkdir /dev/liuqin_pen 0700 system system
++
++service vendor.liuqin_pen_init /vendor/bin/liuqin_pen_init
++    class late_start
++    user system
++    group system
++    disabled
++    oneshot
++
++on property:sys.boot_completed=1
++    start vendor.liuqin_pen_init
+diff --git a/sepolicy/vendor/file_contexts b/sepolicy/vendor/file_contexts
+index 9bbb20e6acdbedd4df5cbef4821c42965699183b..a6a66da6448737ce6d922503fa5341df91017d49 100644
+--- a/sepolicy/vendor/file_contexts
++++ b/sepolicy/vendor/file_contexts
+@@ -10,3 +10,6 @@
+ 
+ # Dolby Media Setting (DMS) HAL - Atmos DAP audio
+ /vendor/bin/hw/vendor\.dolby\.hardware\.dms@2\.0-service u:object_r:hal_dolby_dms_exec:s0
++
++/vendor/bin/liuqin_pen_init u:object_r:vendor_liuqin_pen_init_exec:s0
++/dev/liuqin_pen(/.*)? u:object_r:vendor_liuqin_pen_state_file:s0
+diff --git a/sepolicy/vendor/vendor_liuqin_pen_init.te b/sepolicy/vendor/vendor_liuqin_pen_init.te
+new file mode 100644
+index 0000000000000000000000000000000000000000..02d5702be9d50f236aeefb6ca677c1fcc5d34ce3
+--- /dev/null
++++ b/sepolicy/vendor/vendor_liuqin_pen_init.te
+@@ -0,0 +1,11 @@
++type vendor_liuqin_pen_init, domain;
++type vendor_liuqin_pen_init_exec, exec_type, vendor_file_type, file_type;
++type vendor_liuqin_pen_state_file, dev_type;
++
++init_daemon_domain(vendor_liuqin_pen_init)
++
++allow vendor_liuqin_pen_init touchfeature_device:chr_file { open read write ioctl };
++allowxperm vendor_liuqin_pen_init touchfeature_device:chr_file ioctl { 0x5400 0x5403 0x5404 };
++
++allow vendor_liuqin_pen_init vendor_liuqin_pen_state_file:dir { search write add_name };
++allow vendor_liuqin_pen_init vendor_liuqin_pen_state_file:file { create open read write };
