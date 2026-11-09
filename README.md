@@ -28,16 +28,16 @@ Available from two mirrors:
 
 Each carries:
 
-- `lineage-23.2-<date>-UNOFFICIAL-liuqin.zip` — installable package (recovery sideload).
-- `recovery.img` — LineageOS recovery, flashed first via fastboot.
-- `boot.img`, `dtbo.img`, `vendor_boot.img`, `vbmeta.img`, `vbmeta_system.img` — additional fastboot images.
-- `SHA256SUMS` — checksums for all of the above.
+- `lineage-23.2-<date>-UNOFFICIAL-liuqin.zip` - installable package (recovery sideload).
+- `recovery.img` - LineageOS recovery, flashed first via fastboot.
+- `boot.img`, `dtbo.img`, `vendor_boot.img`, `vbmeta.img`, `vbmeta_system.img` - additional fastboot images.
+- `SHA256SUMS` - checksums for all of the above.
 
-Builds are vanilla (no Google apps). If you want the Play Store and Google services, sideload a Google apps package (for example MindTheGapps arm64 for Android 16) right after the ROM, before first boot.
+The July 9 image is vanilla (no Google apps) and uses EROFS. The earlier instruction to sideload MindTheGapps is withdrawn because the examined installer requires writable system mounts. Separate recovery-installed Google-app packages are unsupported with this image.
 
-## Install (recovery sideload)
+## Initial installation (recovery sideload)
 
-You need an unlocked bootloader and `adb` / `fastboot` on a computer. This erases user data. Flashing an unofficial build is at your own risk.
+You need an unlocked bootloader and `adb` / `fastboot` on a computer. These fresh-install steps erase user data and are not an update procedure. Flashing an unofficial build is at your own risk.
 
 1. Reboot to the bootloader: `adb reboot bootloader`.
 2. Flash the LineageOS recovery to both slots, and disable Android Verified Boot so the device accepts the build:
@@ -49,12 +49,10 @@ You need an unlocked bootloader and `adb` / `fastboot` on a computer. This erase
    ```
 3. Reboot to recovery: `fastboot reboot recovery` (or hold Volume Up + Power).
 4. In LineageOS recovery: Factory reset → Format data / factory reset.
-5. Apply update → Apply from ADB, then on the computer:
-   `adb sideload lineage-23.2-<date>-UNOFFICIAL-liuqin.zip`
-6. Optionally sideload a Google apps zip the same way, before rebooting.
-7. Reboot to system. First boot takes a few minutes.
+5. Apply update → Apply from ADB, then on the computer: `adb sideload lineage-23.2-<date>-UNOFFICIAL-liuqin.zip`
+6. Reboot to system. First boot takes a few minutes.
 
-Verified on liuqin: the images boot, and the recovery boots with `adb sideload` available. If the recovery screen does not render for you, you can format data from the bootloader instead with `fastboot -w`, then enter "Apply from ADB" and sideload as above.
+Verified on liuqin: the images boot, and the recovery boots with `adb sideload` available.
 
 ## Build from source
 
@@ -91,9 +89,9 @@ If you are already running a build without the fix, `modules/liuqin_no_se.zip` i
 
 ## Credits
 
-- [LineageOS](https://github.com/LineageOS) — the platform, `hardware/xiaomi`, and the sm8450 kernel source, devicetrees, and modules.
-- [Sickyman678](https://github.com/Sickyman678) — the liuqin device tree, prebuilt kernel, sm8450-common tree, and vendor blobs these builds are based on.
-- [Xiaomi-SM8475](https://github.com/Xiaomi-SM8475) — the Paranoid Android (vauxite) liuqin device tree that Sickyman678's device tree is forked from.
+- [LineageOS](https://github.com/LineageOS) - the platform, `hardware/xiaomi`, and the sm8450 kernel source, devicetrees, and modules.
+- [Sickyman678](https://github.com/Sickyman678) - the liuqin device tree, prebuilt kernel, sm8450-common tree, and vendor blobs these builds are based on.
+- [Xiaomi-SM8475](https://github.com/Xiaomi-SM8475) - the Paranoid Android (vauxite) liuqin device tree that Sickyman678's device tree is forked from.
 
 ## License
 
